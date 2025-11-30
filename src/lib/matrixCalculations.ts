@@ -19,7 +19,7 @@ export const calculateEigen = (matrix: number[][]): EigenResult => {
     const eigenvaluesArray = Array.isArray(values) ? values : [values];
     const processedEigenvalues = eigenvaluesArray.map((val: any) => {
       if (typeof val === 'object' && 're' in val && 'im' in val) {
-        return { value: val, multiplicity: 1 };
+        return { value: val as math.Complex, multiplicity: 1 };
       }
       return { value: Number(val), multiplicity: 1 };
     });
@@ -31,8 +31,9 @@ export const calculateEigen = (matrix: number[][]): EigenResult => {
     const processedEigenvectors: Array<{ eigenvalue: string, vectors: number[][] }> = [];
     
     if (eigenvectors && Array.isArray(eigenvectors)) {
-      eigenvectors.forEach((eigenItem: any, idx: number) => {
-        const eigenvalueStr = formatEigenvalue(processedEigenvalues[idx].value);
+      eigenvectors.forEach((eigenItem: any) => {
+        // Each eigenItem has {value, vector}
+        const eigenvalueStr = formatEigenvalue(eigenItem.value);
         const vector = eigenItem.vector;
         
         // Convert vector to array
@@ -71,23 +72,23 @@ export const calculateEigen = (matrix: number[][]): EigenResult => {
   }
 };
 
-const formatEigenvalue = (val: number | math.Complex): string => {
+const formatEigenvalue = (val: number | math.Complex | any): string => {
   if (typeof val === 'number') {
     return val.toFixed(4);
   }
-  const complex = val as math.Complex;
-  if (Math.abs(complex.im) < 0.0001) return complex.re.toFixed(4);
-  const sign = complex.im >= 0 ? '+' : '-';
-  return `${complex.re.toFixed(4)} ${sign} ${Math.abs(complex.im).toFixed(4)}i`;
+  if (typeof val === 'object' && 're' in val && 'im' in val) {
+    const complex = val as math.Complex;
+    if (Math.abs(complex.im) < 0.0001) return complex.re.toFixed(4);
+    const sign = complex.im >= 0 ? '+' : '-';
+    return `${complex.re.toFixed(4)} ${sign} ${Math.abs(complex.im).toFixed(4)}i`;
+  }
+  return String(val);
 };
 
 const generateCharacteristicEquation = (matrix: number[][]): string => {
   const n = matrix.length;
   
   try {
-    // Create identity matrix
-    const I = math.identity(n);
-    
     // Create symbolic representation: det(A - λI) = 0
     let equation = `det(A - λI) = 0, where A is the ${n}×${n} matrix`;
     
