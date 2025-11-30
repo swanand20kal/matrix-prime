@@ -21,7 +21,17 @@ export const calculateEigen = (matrix: number[][]): EigenResult => {
     
     // Process eigenvalues
     const eigenvaluesArray = Array.isArray(values) ? values : [values];
-    const processedEigenvalues = eigenvaluesArray.map((val: any) => {
+    
+    // Extract actual values from math.js matrix format
+    let actualValues: any[] = [];
+    if (eigenvaluesArray.length > 0 && (eigenvaluesArray[0] as any)._data) {
+      // Values come as a single matrix with _data array
+      actualValues = (eigenvaluesArray[0] as any)._data;
+    } else {
+      actualValues = eigenvaluesArray;
+    }
+    
+    const processedEigenvalues = actualValues.map((val: any) => {
       console.log('Processing eigenvalue:', val, typeof val);
       if (typeof val === 'object' && 're' in val && 'im' in val) {
         return { value: { re: Number(val.re), im: Number(val.im) }, multiplicity: 1 };
