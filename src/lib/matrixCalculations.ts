@@ -2,7 +2,7 @@ import * as math from 'mathjs';
 
 export interface EigenResult {
   characteristicEq: string;
-  eigenvalues: Array<{ value: number | math.Complex, multiplicity: number }>;
+  eigenvalues: Array<{ value: number | { re: number; im: number }, multiplicity: number }>;
   eigenvectors: Array<{ eigenvalue: string, vectors: number[][] }>;
 }
 
@@ -15,14 +15,21 @@ export const calculateEigen = (matrix: number[][]): EigenResult => {
     const result = math.eigs(M);
     const { values, eigenvectors } = result;
     
+    console.log('Raw eigs result:', result);
+    console.log('Values:', values);
+    console.log('Eigenvectors:', eigenvectors);
+    
     // Process eigenvalues
     const eigenvaluesArray = Array.isArray(values) ? values : [values];
     const processedEigenvalues = eigenvaluesArray.map((val: any) => {
+      console.log('Processing eigenvalue:', val, typeof val);
       if (typeof val === 'object' && 're' in val && 'im' in val) {
-        return { value: val as math.Complex, multiplicity: 1 };
+        return { value: { re: Number(val.re), im: Number(val.im) }, multiplicity: 1 };
       }
       return { value: Number(val), multiplicity: 1 };
     });
+    
+    console.log('Processed eigenvalues:', processedEigenvalues);
     
     // Generate characteristic equation string
     const characteristicEq = generateCharacteristicEquation(matrix);

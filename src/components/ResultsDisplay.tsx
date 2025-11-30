@@ -7,7 +7,10 @@ interface ResultsDisplayProps {
 }
 
 const ResultsDisplay = ({ characteristicEq, eigenvalues, eigenvectors }: ResultsDisplayProps) => {
+  console.log('ResultsDisplay received eigenvalues:', eigenvalues);
+  
   const formatComplex = (val: number | { re: number; im: number }): string => {
+    console.log('Formatting value:', val, typeof val);
     if (typeof val === 'number') {
       return val.toFixed(4);
     }
