@@ -1,4 +1,4 @@
-
+please edit this website we have to make it like quiz all things first of all we collect from user and the we tell him is that correct or incorrect if it is incorrect then we give hint to it 
 - Navigate to the desired file(s).
 - Click the "Edit" button (pencil icon) at the top right of the file view.
 - Make your changes and commit the changes.
